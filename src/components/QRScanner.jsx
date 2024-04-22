@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 const QRScanner = () => {
   const [scannedData, setScannedData] = useState("");
@@ -28,6 +28,28 @@ const QRScanner = () => {
     setScannedData(scannerData);
   };
 
+
+  const inputRef = useRef(null);
+  const [barcode, setBarcode] = useState('');
+  const [isActive, setIsActive] = useState(false);
+
+  const handleBarcodeScan = (event) => {
+    setBarcode(event.target.value);
+  };
+
+  const startScanning = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+      setIsActive(true);
+    }
+  };
+
+  const stopScanning = () => {
+    if (inputRef.current) {
+      inputRef.current.blur();
+      setIsActive(false);
+    }
+  };
   return (
     <div>
       <h4>QR Code Scanner</h4>
@@ -41,6 +63,18 @@ const QRScanner = () => {
         Start Scanning
       </button>
       <button onClick={disconnectScanner}>Stop Scanning</button>
+
+      <div>
+        <h1>Barcode Scanner</h1>
+        <input type="text" ref={inputRef} onChange={handleBarcodeScan} value={barcode} style={{ position: "absolute", opacity: 0, pointerEvents: "none" }} />
+        <p>Scanned Barcode: {barcode}</p>
+        <button onClick={startScanning} disabled={isActive}>
+          Start Scanning
+        </button>
+        <button onClick={stopScanning} disabled={!isActive}>
+          Stop Scanning
+        </button>
+      </div>
     </div>
   );
 };
